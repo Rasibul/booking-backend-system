@@ -92,7 +92,7 @@ const getBookingsService = async (filter: GetBookingsFilter) => {
 
     const now = new Date();
 
-    const bookingsWithStatus = bookings.map((booking) => {
+    const bookingsWithStatus = bookings.map((booking: any) => {
         let status: "Past" | "Ongoing" | "Upcoming";
 
         if (booking.endTime < now) {

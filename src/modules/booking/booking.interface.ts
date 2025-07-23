@@ -3,6 +3,7 @@ export interface BookingInput {
     startTime: Date;
     endTime: Date;
     requestedBy: string;
+    status?: 'pending' | 'confirmed' | 'cancelled';
 }
 export interface GetBookingsFilter {
     resource?: string;
