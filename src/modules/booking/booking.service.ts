@@ -3,6 +3,9 @@ import Prisma from "../../config/db"
 import { BookingInput, GetBookingsFilter } from "./booking.interface"
 import { subMinutes, addMinutes, isBefore, differenceInMinutes, max } from "date-fns";
 
+
+
+const MAX_BOOKING_DURATION_MINUTES = 120;
 const createBookingService = async (input: BookingInput) => {
     const { resource, startTime, endTime, requestedBy } = input;
 
@@ -15,7 +18,10 @@ const createBookingService = async (input: BookingInput) => {
         throw new Error("Booking must be at least 15 minutes long");
     }
 
-    // 10-minute buffer before and after
+    if (duration > MAX_BOOKING_DURATION_MINUTES) {
+        throw new Error("Booking cannot exceed 2 hours");
+    }
+
     const bufferStart = subMinutes(startTime, 10);
     const bufferEnd = addMinutes(endTime, 10);
 
