@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { bookingService } from "./booking.service";
+import { get } from "http";
 
 const createBookingHandler = async (req: Request, res: Response) => {
     try {
@@ -32,6 +33,26 @@ const createBookingHandler = async (req: Request, res: Response) => {
     }
 };
 
+
+const getBookingsHandler = async (req: Request, res: Response) => {
+    try {
+        const { resource, date } = req.query as { resource?: string; date?: string };
+        const bookings = await bookingService.getBookings({ resource, date });
+
+        res.status(200).json({
+            success: true,
+            message: 'Bookings fetched successfully',
+            data: bookings,
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Server error',
+        });
+    }
+};
+
 export const bookingController = {
     createBooking: createBookingHandler,
+    getBookings: getBookingsHandler,
 };

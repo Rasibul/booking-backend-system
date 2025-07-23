@@ -4,3 +4,7 @@ export interface BookingInput {
     endTime: Date;
     requestedBy: string;
 }
+export interface GetBookingsFilter {
+    resource?: string;
+    date?: string;
+}

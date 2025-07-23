@@ -1,5 +1,5 @@
 import Prisma from "../../config/db"
-import { BookingInput } from "./booking.interface"
+import { BookingInput, GetBookingsFilter } from "./booking.interface"
 import { subMinutes, addMinutes, isBefore, differenceInMinutes } from "date-fns";
 
 const createBookingService = async (input: BookingInput) => {
@@ -48,6 +48,46 @@ const createBookingService = async (input: BookingInput) => {
     return booking;
 };
 
+const getBookingsService = async (filter: GetBookingsFilter) => {
+    const whereClause: any = {};
+
+    if (filter.resource) {
+        whereClause.resource = filter.resource;
+    }
+
+    if (filter.date) {
+        // Filter bookings where startTime or endTime falls within the date
+        const dayStart = new Date(`${filter.date}T00:00:00.000Z`);
+        const dayEnd = new Date(`${filter.date}T23:59:59.999Z`);
+
+        whereClause.OR = [
+            {
+                startTime: {
+                    gte: dayStart,
+                    lte: dayEnd,
+                },
+            },
+            {
+                endTime: {
+                    gte: dayStart,
+                    lte: dayEnd,
+                },
+            },
+        ];
+    }
+
+    const bookings = await Prisma.booking.findMany({
+        where: whereClause,
+        orderBy: { startTime: 'asc' },
+    });
+    return bookings;
+};
+
+
+
+
+
 export const bookingService = {
     createBooking: createBookingService,
+    getBookings: getBookingsService,
 }
