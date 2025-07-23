@@ -27,7 +27,7 @@ const createBookingHandler = async (req: Request, res: Response) => {
     } catch (error: any) {
         return res.status(400).json({
             success: false,
-            message: error.message || "Booking failed.",
+            message: error.message || "Something went wrong.",
         });
     }
 };
