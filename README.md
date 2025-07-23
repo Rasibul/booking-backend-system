@@ -5,7 +5,7 @@ A full-stack web application that allows users to book shared resources (e.g., m
 ## 🔧 Tech Stack
 
 - **Frontend**: Next.js (App Router), Tailwind CSS, TypeScript  
-- **Backend**: Express.js + TypeScript (or Next.js Route Handlers)  
+- **Backend**: Express.js + TypeScript 
 - **Database**: SQLite + Prisma ORM
 
 ---
@@ -19,9 +19,9 @@ A full-stack web application that allows users to book shared resources (e.g., m
 - 📋 **Booking List Dashboard** grouped by resource  
 - 📅 **Filters** by resource and date  
 - 🔄 **Status Tags**: `Upcoming`, `Ongoing`, `Past`  
-- ❌ **Delete/Cancel Bookings** *(optional)*  
-- 📆 **Weekly Calendar View** *(optional)*  
-- 🔍 **Available Slot Check API** *(optional)*
+- ❌ **Delete/Cancel Bookings
+- 📆 **Weekly Calendar View 
+- 🔍 **Available Slot Check API
 
 ---
 
