@@ -152,11 +152,19 @@ const getAvailableSlotsService = async (
     return availableSlots;
 };
 
-
+const deleteBookingService = async (id: string) => {
+    const booking = await Prisma.booking.delete({
+        where: {
+            id,
+        },
+    });
+    return booking;
+};
 
 
 export const bookingService = {
     createBooking: createBookingService,
     getBookings: getBookingsService,
     getAvailableSlots: getAvailableSlotsService,
+    deleteBooking: deleteBookingService,
 }

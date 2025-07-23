@@ -80,8 +80,33 @@ const getAvailableSlotsHandler = async (req: Request, res: Response) => {
     }
 };
 
+const deleteBookingHandler = async (req: Request, res: Response) => {
+    try {
+        const bookingId = req.params.id;
+        if (!bookingId) {
+            return res.status(400).json({
+                success: false,
+                message: "Booking ID is required.",
+            });
+        }
+
+        await bookingService.deleteBooking(bookingId);
+
+        return res.status(200).json({
+            success: true,
+            message: "Booking deleted successfully.",
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            success: false,
+            message: error.message || "Something went wrong.",
+        });
+    }
+};
+
 export const bookingController = {
     createBooking: createBookingHandler,
     getBookings: getBookingsHandler,
     getAvailableSlots: getAvailableSlotsHandler,
+    deleteBooking: deleteBookingHandler,
 };

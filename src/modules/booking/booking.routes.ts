@@ -9,4 +9,6 @@ router.get('/bookings', bookingController.getBookings);
 
 router.get('/available-slots', bookingController.getAvailableSlots);
 
+router.delete('/bookings/:id', bookingController.deleteBooking);
+
 module.exports = router;
