@@ -3,8 +3,10 @@ const router = Router();
 import { bookingController } from './booking.controller';
 
 
-router.post('/', bookingController.createBooking);
+router.post('/bookings', bookingController.createBooking);
 
-router.get('/', bookingController.getBookings);
+router.get('/bookings', bookingController.getBookings);
 
-export const bookingRouter = router;
+router.get('/available-slots', bookingController.getAvailableSlots);
+
+module.exports = router;

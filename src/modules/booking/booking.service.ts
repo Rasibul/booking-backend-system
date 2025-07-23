@@ -1,6 +1,7 @@
+import { get } from "http";
 import Prisma from "../../config/db"
 import { BookingInput, GetBookingsFilter } from "./booking.interface"
-import { subMinutes, addMinutes, isBefore, differenceInMinutes } from "date-fns";
+import { subMinutes, addMinutes, isBefore, differenceInMinutes, max } from "date-fns";
 
 const createBookingService = async (input: BookingInput) => {
     const { resource, startTime, endTime, requestedBy } = input;
@@ -85,9 +86,77 @@ const getBookingsService = async (filter: GetBookingsFilter) => {
 
 
 
+const getAvailableSlotsService = async (
+    data: GetBookingsFilter
+) => {
+    if (!data.resource || !data.date) {
+        throw new Error('resource and date are required');
+    }
+
+    const dayStart = new Date(`${data.date}T08:00:00.000Z`);
+    const dayEnd = new Date(`${data.date}T18:00:00.000Z`);
+
+    const bookings = await Prisma.booking.findMany({
+        where: {
+            resource: data.resource,
+            OR: [
+                {
+                    startTime: {
+                        gte: dayStart,
+                        lt: dayEnd,
+                    },
+                },
+                {
+                    endTime: {
+                        gt: dayStart,
+                        lte: dayEnd,
+                    },
+                },
+                {
+                    AND: [
+                        {
+                            startTime: { lt: dayStart },
+                        },
+                        {
+                            endTime: { gt: dayEnd },
+                        },
+                    ],
+                },
+            ],
+        },
+        orderBy: { startTime: 'asc' },
+    });
+
+    const availableSlots = [];
+    let slotStart = dayStart;
+
+    for (const booking of bookings) {
+        if (slotStart < booking.startTime) {
+            availableSlots.push({
+                startTime: slotStart,
+                endTime: booking.startTime,
+            });
+        }
+        slotStart = new Date(
+            Math.max(slotStart.getTime(), booking.endTime.getTime())
+        );
+    }
+
+    if (slotStart < dayEnd) {
+        availableSlots.push({
+            startTime: slotStart,
+            endTime: dayEnd,
+        });
+    }
+
+    return availableSlots;
+};
+
+
 
 
 export const bookingService = {
     createBooking: createBookingService,
     getBookings: getBookingsService,
+    getAvailableSlots: getAvailableSlotsService,
 }

@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import router from "./routes";
+
+
 
 
 dotenv.config();
@@ -11,8 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API entry point
-app.use("/api", router);
+const bookingRouter = require("./modules/booking/booking.routes");
+
+app.use("/api", bookingRouter);
 
 app.get("/", (_, res) => {
     res.send("🚀 Server is running!");

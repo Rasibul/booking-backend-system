@@ -52,7 +52,36 @@ const getBookingsHandler = async (req: Request, res: Response) => {
     }
 };
 
+
+const getAvailableSlotsHandler = async (req: Request, res: Response) => {
+    try {
+        const { resource, date } = req.query as { resource?: string; date?: string };
+        if (!resource || !date) {
+            return res.status(400).json({
+                success: false,
+                message: 'resource and date query parameters are required',
+            });
+        }
+
+        const slots = await bookingService.getAvailableSlots({
+            resource, date
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Available slots fetched successfully',
+            data: slots,
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Server error',
+        });
+    }
+};
+
 export const bookingController = {
     createBooking: createBookingHandler,
     getBookings: getBookingsHandler,
+    getAvailableSlots: getAvailableSlotsHandler,
 };
