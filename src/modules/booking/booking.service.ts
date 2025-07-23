@@ -1,7 +1,10 @@
-import { get } from "http";
+
+
 import Prisma from "../../config/db"
 import { BookingInput, GetBookingsFilter } from "./booking.interface"
-import { subMinutes, addMinutes, isBefore, differenceInMinutes, max } from "date-fns";
+import {
+    subMinutes, addMinutes, isBefore, differenceInMinutes, max
+} from "date-fns";
 
 
 
@@ -63,7 +66,6 @@ const getBookingsService = async (filter: GetBookingsFilter) => {
     }
 
     if (filter.date) {
-        // Filter bookings where startTime or endTime falls within the date
         const dayStart = new Date(`${filter.date}T00:00:00.000Z`);
         const dayEnd = new Date(`${filter.date}T23:59:59.999Z`);
 
@@ -85,9 +87,29 @@ const getBookingsService = async (filter: GetBookingsFilter) => {
 
     const bookings = await Prisma.booking.findMany({
         where: whereClause,
-        orderBy: { startTime: 'asc' },
+        orderBy: { startTime: "asc" },
     });
-    return bookings;
+
+    const now = new Date();
+
+    const bookingsWithStatus = bookings.map((booking) => {
+        let status: "Past" | "Ongoing" | "Upcoming";
+
+        if (booking.endTime < now) {
+            status = "Past";
+        } else if (booking.startTime <= now && booking.endTime >= now) {
+            status = "Ongoing";
+        } else {
+            status = "Upcoming";
+        }
+
+        return {
+            ...booking,
+            status,
+        };
+    });
+
+    return bookingsWithStatus;
 };
 
 
